@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 /**
  * Photo Caption Automation Script
  * Automates the workflow of adding captions to photos in iCloud Photos
@@ -13,28 +11,13 @@ const robot = require("robotjs");
 const readline = require("readline");
 const fs = require("fs");
 const path = require("path");
-const { POSITIONS, DELAYS } = require("./consts");
-const { findCaptionBox } = require("./captionfinder");
+const { POSITIONS } = require("./consts");
 
 const PROGRESS_FILE = path.join(__dirname, ".photo_progress.json");
 
-// Utility functions
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
 const clickAt = async (x, y) => {
   robot.moveMouse(x, y);
-  await sleep(DELAYS.afterClick);
   robot.mouseClick("left");
-  await sleep(DELAYS.afterClick);
-};
-
-const humanClickAt = async (x, y) => {
-  robot.moveMouse(x, y);
-  await sleep(150);
-  robot.mouseToggle("down");
-  await sleep(120);
-  robot.mouseToggle("up");
-  await sleep(200);
 };
 
 const typeText = (text) => {
@@ -78,12 +61,10 @@ const navigateToLastPosition = async (count) => {
 
   // Click on Photos window to ensure it's focused
   await clickAt(POSITIONS.photosWindow.x, POSITIONS.photosWindow.y);
-  await sleep(500);
 
   // Press right arrow 'count' times
   for (let i = 0; i < count; i++) {
     robot.keyTap("right");
-    await sleep(DELAYS.navigationArrow);
 
     // Show progress every 10 photos
     if ((i + 1) % 10 === 0) {
@@ -95,7 +76,6 @@ const navigateToLastPosition = async (count) => {
 
   // Click back on terminal
   await clickAt(POSITIONS.terminal.x, POSITIONS.terminal.y);
-  await sleep(500);
 
   console.log("Ready to continue!\n");
 };
@@ -107,44 +87,31 @@ const processSinglePhoto = async (caption, currentCount) => {
 
   // 1. Click on Photos window
   await clickAt(POSITIONS.photosWindow.x, POSITIONS.photosWindow.y);
-  await sleep(DELAYS.betweenActions);
 
   // 2. Open info panel
   await clickAt(POSITIONS.infoIcon.x, POSITIONS.infoIcon.y);
-  await sleep(DELAYS.betweenActions);
 
   // 3. Click on info panel and caption box
   await clickAt(POSITIONS.infoPanel.x, POSITIONS.infoPanel.y);
-  await sleep(DELAYS.betweenActions);
 
   await clickAt(POSITIONS.addTitle.x, POSITIONS.addTitle.y);
   robot.keyTap("tab");
-  await sleep(DELAYS.betweenActions);
-
-  //   const pos = await findCaptionBox();
-  //   await clickAt(pos.x / 2, pos.y / 2);
-  //   await sleep(DELAYS.betweenActions);
+  robot.keyTap("delete"); // in case there is already something in there.
 
   // 4. Type the caption
   typeText(caption);
-  await sleep(DELAYS.betweenActions);
 
   // 5. Close info panel (Command + I)
   await clickAt(POSITIONS.infoIcon.x, POSITIONS.infoIcon.y);
-  //   robot.keyTap("i", "command");
-  await sleep(DELAYS.betweenActions);
 
   // 6. Click on Photos window
   await clickAt(POSITIONS.photosWindow.x, POSITIONS.photosWindow.y);
-  await sleep(DELAYS.betweenActions);
 
   // 7. Move to next photo (Right arrow)
   robot.keyTap("right");
-  await sleep(DELAYS.betweenActions);
 
   // 8. Click back on terminal
   await clickAt(POSITIONS.terminal.x, POSITIONS.terminal.y);
-  await sleep(DELAYS.betweenActions);
 
   console.timeEnd("processSinglePhoto");
   console.log("✓ Caption added, moved to next photo\n");

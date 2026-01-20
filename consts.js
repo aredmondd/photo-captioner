@@ -5,9 +5,3 @@ export const POSITIONS = {
   infoIcon: { x: 1281, y: 57 },
   addTitle: { x: 840, y: 224 },
 };
-
-export const DELAYS = {
-  afterClick: 0,
-  betweenActions: 0,
-  navigationArrow: 0,
-};
