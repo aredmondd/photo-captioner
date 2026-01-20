@@ -92,7 +92,7 @@ const navigateToLastPosition = async (count) => {
     }
   }
 
-  console.log(`\r✓ Navigated to photo #${count + 1}       `);
+  console.log(`\r✅ Navigated to photo #${count + 1}       `);
 
   // Click back on terminal
   await clickAt(POSITIONS.terminal.x, POSITIONS.terminal.y);
@@ -103,6 +103,7 @@ const navigateToLastPosition = async (count) => {
 
 // Main workflow automation
 const processSinglePhoto = async (caption, currentCount) => {
+  console.time("processSinglePhoto");
   console.log(`[Photo ${currentCount}] Processing caption: "${caption}"`);
 
   // 1. Click on Photos window
@@ -122,8 +123,8 @@ const processSinglePhoto = async (caption, currentCount) => {
   await sleep(DELAYS.betweenActions);
 
   // 4. Type the caption
-  //   await typeText(caption);
-  //   await sleep(DELAYS.betweenActions);
+  await typeText(caption);
+  await sleep(DELAYS.betweenActions);
 
   // 5. Close info panel (Command + I)
   await clickAt(POSITIONS.infoIcon.x, POSITIONS.infoIcon.y);
@@ -141,6 +142,7 @@ const processSinglePhoto = async (caption, currentCount) => {
   await clickAt(POSITIONS.terminal.x, POSITIONS.terminal.y);
   await sleep(DELAYS.betweenActions);
 
+  console.timeEnd("processSinglePhoto");
   console.log("✓ Caption added, moved to next photo\n");
 };
 
@@ -240,12 +242,5 @@ const startCaptionLoop = async () => {
 
   promptForCaption();
 };
-
-// Start the script
-console.log("Photo Caption Automation Script");
-console.log("Make sure you have:\n");
-console.log("1. Updated POSITIONS object with correct coordinates");
-console.log("2. Photos app open with a photo selected");
-console.log("3. Terminal window positioned correctly\n");
 
 startCaptionLoop();

@@ -1,6 +1,5 @@
 const path = require("path");
 const fs = require("fs");
-const robot = require("robotjs");
 const screenshot = require("screenshot-desktop");
 const PNG = require("pngjs").PNG;
 const pixelmatchLib = require("pixelmatch");
@@ -11,11 +10,11 @@ const CAPTION_SEARCH_AREA = {
   x: 760 * 2, // left
   y: 360 * 2, // top
   width: 150 * 2, // horizontal range
-  height: 100 * 2, // vertical range
+  height: 75 * 2, // vertical range
 };
 
 // Load template image (the caption box template)
-const templatePath = path.join(__dirname, "captionTemplate.png");
+const templatePath = path.join(__dirname, "captionTemplate2.png");
 if (!fs.existsSync(templatePath)) {
   throw new Error(`Template image not found at ${templatePath}`);
 }
@@ -68,8 +67,8 @@ const findCaptionBox = async () => {
     }
 
     // Save debug screenshot of the cropped area (optional - comment out for speed)
-    // const croppedBuffer = PNG.sync.write(croppedImg);
-    // fs.writeFileSync(path.join(__dirname, "debug_cropped.png"), croppedBuffer);
+    const croppedBuffer = PNG.sync.write(croppedImg);
+    fs.writeFileSync(path.join(__dirname, "debug_cropped.png"), croppedBuffer);
 
     const { width: bw, height: bh } = croppedImg;
 
