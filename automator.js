@@ -37,9 +37,8 @@ const humanClickAt = async (x, y) => {
   await sleep(200);
 };
 
-const typeText = async (text) => {
+const typeText = (text) => {
   robot.typeString(text);
-  await sleep(DELAYS.afterKeypress);
 };
 
 // Progress tracking functions
@@ -112,22 +111,27 @@ const processSinglePhoto = async (caption, currentCount) => {
 
   // 2. Open info panel
   await clickAt(POSITIONS.infoIcon.x, POSITIONS.infoIcon.y);
-  await sleep(1000);
+  await sleep(DELAYS.betweenActions);
 
   // 3. Click on info panel and caption box
   await clickAt(POSITIONS.infoPanel.x, POSITIONS.infoPanel.y);
   await sleep(DELAYS.betweenActions);
 
-  const pos = await findCaptionBox();
-  await clickAt(pos.x / 2, pos.y / 2);
+  await clickAt(POSITIONS.addTitle.x, POSITIONS.addTitle.y);
+  robot.keyTap("tab");
   await sleep(DELAYS.betweenActions);
 
+  //   const pos = await findCaptionBox();
+  //   await clickAt(pos.x / 2, pos.y / 2);
+  //   await sleep(DELAYS.betweenActions);
+
   // 4. Type the caption
-  await typeText(caption);
+  typeText(caption);
   await sleep(DELAYS.betweenActions);
 
   // 5. Close info panel (Command + I)
   await clickAt(POSITIONS.infoIcon.x, POSITIONS.infoIcon.y);
+  //   robot.keyTap("i", "command");
   await sleep(DELAYS.betweenActions);
 
   // 6. Click on Photos window
