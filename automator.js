@@ -11,9 +11,12 @@ const robot = require("robotjs");
 const readline = require("readline");
 const fs = require("fs");
 const path = require("path");
-const { POSITIONS } = require("./consts");
+const clipboardy = require("clipboardy");
+const { POSITIONS, WAIT_TIME, POST_COPY_WAIT_TIME } = require("./consts");
 
 const PROGRESS_FILE = path.join(__dirname, ".photo_progress.json");
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const clickAt = async (x, y) => {
   robot.moveMouse(x, y);
@@ -82,39 +85,61 @@ const navigateToLastPosition = async (count) => {
 
 // Main workflow automation
 const processSinglePhoto = async (caption, currentCount) => {
+  let success = true;
+
   console.time("processSinglePhoto");
   console.log(`[Photo ${currentCount}] Processing caption: "${caption}"`);
 
   // 1. Click on Photos window
   await clickAt(POSITIONS.photosWindow.x, POSITIONS.photosWindow.y);
+  await sleep(WAIT_TIME);
 
   // 2. Open info panel
   await clickAt(POSITIONS.infoIcon.x, POSITIONS.infoIcon.y);
+  await sleep(WAIT_TIME);
 
   // 3. Click on info panel and caption box
   await clickAt(POSITIONS.infoPanel.x, POSITIONS.infoPanel.y);
+  await sleep(WAIT_TIME);
 
   await clickAt(POSITIONS.addTitle.x, POSITIONS.addTitle.y);
   robot.keyTap("tab");
   robot.keyTap("delete"); // in case there is already something in there.
+  await sleep(WAIT_TIME);
 
   // 4. Type the caption
   typeText(caption);
+  robot.keyTap("a", "command");
+  robot.keyTap("c", "command");
+  await sleep(POST_COPY_WAIT_TIME);
+  if (caption !== clipboardy.default.readSync()) {
+    success = false;
+  }
+  await sleep(WAIT_TIME);
 
   // 5. Close info panel (Command + I)
   await clickAt(POSITIONS.infoIcon.x, POSITIONS.infoIcon.y);
+  await sleep(WAIT_TIME);
 
   // 6. Click on Photos window
   await clickAt(POSITIONS.photosWindow.x, POSITIONS.photosWindow.y);
+  await sleep(WAIT_TIME);
 
-  // 7. Move to next photo (Right arrow)
-  robot.keyTap("right");
+  if (success) {
+    // Move to next photo (Right arrow)
+    robot.keyTap("right");
+    console.log("✅ SAVED THE FIELD.");
+  } else {
+    console.log("❌ DID NOT SAVE THE FIELD");
+  }
+  await sleep(WAIT_TIME);
 
   // 8. Click back on terminal
   await clickAt(POSITIONS.terminal.x, POSITIONS.terminal.y);
+  await sleep(WAIT_TIME);
 
   console.timeEnd("processSinglePhoto");
-  console.log("✓ Caption added, moved to next photo\n");
+  console.log();
 };
 
 // Interactive prompt loop
