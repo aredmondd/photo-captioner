@@ -7,4 +7,4 @@ export const POSITIONS = {
 };
 
 export const WAIT_TIME = 2;
-export const POST_COPY_WAIT_TIME = 51;
+export const POST_COPY_WAIT_TIME = 100;
