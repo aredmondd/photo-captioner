@@ -106,3 +106,7 @@ Progress is stored in `.photo_progress.json`:
 
 - This file is created automatically
 - Delete it or type `n` or `no` at the beginning to avoid this save.
+
+### Optimizations
+
+- If all you care about is raw speed, set `GOD_MODE` to true
