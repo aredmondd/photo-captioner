@@ -62,7 +62,7 @@ You will be prompted to hover over:
 
 The locations of my coordinates are shown in the image below:
 
-![](pixel-coordinate-general-locations.jpg)
+![](images/pixel-coordinate-general-locations.jpg)
 
 When finished, the script will print a `POSITIONS` object. Copy the output and paste it into `consts.js`
 
@@ -97,4 +97,4 @@ Progress is stored in `.photo_progress.json`:
 - If you're having wierd issues with the captions field not being selected, you can debug quite quickly by setting WAIT_TIME to 500, or 1000 to see what's happening in slow motion.
 
 - If you're having issues with the info icon not being selected all the time, it's probably because your photos window is too small. Make sure the size of the window is large enough so the top right portion of the photos window can display all the icons. If it's too small, it'll look like this, and you won't be able to see the info icon anymore. <br />
-  ![](./too-small.png)
+  ![](/images/too-small.png)
