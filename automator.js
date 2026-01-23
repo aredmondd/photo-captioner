@@ -57,12 +57,17 @@ const processSinglePhoto = async (caption, currentCount) => {
     robot.keyTap("delete");
     await conditionalSleep();
 
-    // Type and verify caption
+    // Type
     typeText(caption);
-    robot.keyTap("a", "command");
-    robot.keyTap("c", "command");
 
+    // Verify caption
     if (DOUBLE_CHECK_CAPTION) {
+      // Reset back to addTitle field, and tab so we ensure it's in the caption field.
+      await clickAndWait(POSITIONS.addTitle);
+      robot.keyTap("tab");
+      robot.keyTap("a", "command");
+      robot.keyTap("c", "command");
+
       await sleep(POST_COPY_WAIT_TIME);
       success = caption === clipboardy.readSync();
     }

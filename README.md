@@ -14,21 +14,6 @@ Semi-automates the process of adding captions to photos in Apple Photos using ke
    - Moves to the next photo
 4. Progress is saved locally so you can resume later
 
-### File Structure
-
-```
-.
-├── automator.js
-├── calibrate.js
-├── consts.js
-├── .photo_progress.json
-```
-
-`automator.js`: main automation loop <br />
-`calibrate.js`: interactive calibration utility <br />
-`consts.js`: config for coordinates & timing delays <br />
-`.photo-progress.json`: auto-generated progress file <br />
-
 ### Disclaimer
 
 This script uses custom screen coordinates and simulated keyboard and mouse input via [`robotjs`](https://github.com/octalmage/robotjs])
@@ -107,6 +92,9 @@ Progress is stored in `.photo_progress.json`:
 - This file is created automatically
 - Delete it or type `n` or `no` at the beginning to avoid this save.
 
-### Optimizations
+### Notes
 
-- If all you care about is raw speed, set `GOD_MODE` to true
+- If you're having wierd issues with the captions field not being selected, you can debug quite quickly by setting WAIT_TIME to 500, or 1000 to see what's happening in slow motion.
+
+- If you're having issues with the info icon not being selected all the time, it's probably because your photos window is too small. Make sure the size of the window is large enough so the top right portion of the photos window can display all the icons. If it's too small, it'll look like this, and you won't be able to see the info icon anymore. <br />
+  ![](./too-small.png)
