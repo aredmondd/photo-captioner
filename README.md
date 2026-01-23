@@ -98,3 +98,5 @@ Progress is stored in `.photo_progress.json`:
 
 - If you're having issues with the info icon not being selected all the time, it's probably because your photos window is too small. Make sure the size of the window is large enough so the top right portion of the photos window can display all the icons. If it's too small, it'll look like this, and you won't be able to see the info icon anymore. <br />
   ![](/images/too-small.png)
+
+- Tweaking the WAIT_TIME is a great way to fix most bugs. Sometimes the Apple UI just... doesn't work or load fast enough. I reccomend not going any faster than 20-50ms.
