@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import robot from "robotjs";
-import { POSITIONS } from "./consts.js";
+import { POSITIONS, SPEED_MODE, WAIT_TIME } from "./consts.js";
 
 // -----------------------------------------------------------------------------
 // Paths
@@ -19,13 +19,18 @@ const PROGRESS_FILE = path.join(__dirname, ".photo_progress.json");
 
 export const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+export const conditionalSleep = async () => {
+  if (!SPEED_MODE) await sleep(WAIT_TIME);
+};
+
 // -----------------------------------------------------------------------------
 // Robot helpers
 // -----------------------------------------------------------------------------
 
-export const clickAt = async (x, y) => {
-  robot.moveMouse(x, y);
+export const clickAndWait = async (position) => {
+  robot.moveMouse(position.x, position.y);
   robot.mouseClick("left");
+  await conditionalSleep();
 };
 
 export const typeText = (text) => {
@@ -35,6 +40,20 @@ export const typeText = (text) => {
 // -----------------------------------------------------------------------------
 // Progress helpers
 // -----------------------------------------------------------------------------
+
+export const displayProgress = (progress) => {
+  if (progress.photosCompleted === 0) return;
+
+  console.log(
+    `📊 Saved progress found: ${progress.photosCompleted} photos completed`,
+  );
+  if (progress.lastSession) {
+    console.log(
+      `   Last session: ${new Date(progress.lastSession).toLocaleString()}`,
+    );
+  }
+  console.log(`   Remaining: ~${12000 - progress.photosCompleted} photos\n`);
+};
 
 export const loadProgress = () => {
   try {
@@ -64,6 +83,18 @@ export const saveProgress = (photosCompleted) => {
   }
 };
 
+export const promptResumeSession = async (rl) => {
+  const answer = await new Promise((resolve) => {
+    rl.question("Resume from last position? (y/n): ", resolve);
+  });
+  return answer.toLowerCase() === "y" || answer.toLowerCase() === "yes";
+};
+
+export const saveAndNotify = (photosCompleted) => {
+  saveProgress(photosCompleted);
+  console.log(`💾 Progress saved (${photosCompleted} photos completed)\n`);
+};
+
 // -----------------------------------------------------------------------------
 // Navigation
 // -----------------------------------------------------------------------------
@@ -78,7 +109,7 @@ export const navigateToLastPosition = async (count) => {
   await sleep(3000);
 
   // Focus Photos
-  await clickAt(POSITIONS.photosWindow.x, POSITIONS.photosWindow.y);
+  await clickAndWait(POSITIONS.photosWindow);
 
   // Step forward photo-by-photo
   for (let i = 0; i < count; i++) {
@@ -92,7 +123,22 @@ export const navigateToLastPosition = async (count) => {
   console.log(`\r✅ Navigated to photo #${count + 1}       `);
 
   // Refocus terminal
-  await clickAt(POSITIONS.terminal.x, POSITIONS.terminal.y);
+  await clickAndWait(POSITIONS.terminal);
 
   console.log("Ready to continue!\n");
+};
+
+// -----------------------------------------------------------------------------
+// General
+// -----------------------------------------------------------------------------
+export const isQuitCommand = (input) => {
+  const normalized = input.toLowerCase();
+  return normalized === "quit" || normalized === "exit";
+};
+
+export const handleShutdown = (rl, photosCompleted) => {
+  console.log(`\n✅ Saving progress... (${photosCompleted} photos completed)`);
+  saveAndNotify(photosCompleted);
+  console.log("Run the script again to resume.\n");
+  rl.close();
 };
