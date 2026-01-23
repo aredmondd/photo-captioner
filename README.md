@@ -2,6 +2,8 @@
 
 Semi-automates the process of adding captions to photos in Apple Photos using keyboard and mouse automation.
 
+![](/images/demo-with-search.gif)
+
 ### How It Works
 
 0. Calibrate screen coordinates for your display and window layout
